@@ -113,8 +113,7 @@ func main() {
 		defer cancel()
 
 		ch := make(chan os.Signal, 1)
-		signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM,
-			syscall.SIGQUIT, syscall.SIGUSR1, syscall.SIGUSR2)
+		signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 		for {
 			switch <-ch {
 			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:

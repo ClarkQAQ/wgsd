@@ -22,3 +22,6 @@ go.work
 
 # any binary
 *.bin
+
+# release
+release/

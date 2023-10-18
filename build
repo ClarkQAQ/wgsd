@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+if [[ "${TRACE-0}" == "1" ]]; then
+    set -o xtrace
+fi
+
+cd "$(dirname "$0")"
+
+export CGO_ENABLED=0
+
+BUILD_PLATFORM="linux:386,linux:amd64,linux:arm,linux:arm64,darwin:arm64,darwin:amd64,windows:386,windows:amd64"
+for platform in ${BUILD_PLATFORM//,/ }; do
+    GOOS=${platform%:*}
+    GOARCH=${platform#*:}
+    BIN_NAME="release/${GOOS}_${GOARCH}"
+    if [[ "${GOOS}" == "windows" ]]; then
+        BIN_NAME="${BIN_NAME}.exe"
+    fi
+    echo "building ${BIN_NAME}..."
+    GOOS=${GOOS} GOARCH=${GOARCH} go build -v -a -ldflags "-s -w" -gcflags="all=-trimpath=${PWD}" -asmflags="all=-trimpath=${PWD}" -o ${BIN_NAME} .
+done
